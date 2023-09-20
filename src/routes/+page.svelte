@@ -163,7 +163,7 @@
             <Bear />
           </div>
           <p>It's so white</p>
-          <p class="text-gray-500">Here's a polar bear in the snow</p>
+          <p class="text-gray-500">Here's a polar bear</p>
         </div>
       </div>
     {/each}
