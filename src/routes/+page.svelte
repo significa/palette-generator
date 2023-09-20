@@ -8,19 +8,20 @@
   import { goto } from '$app/navigation';
   import SlidersHorizontal from '$lib/icons/sliders-horizontal.svelte';
   import PaletteIcon from '$lib/icons/palette.svelte';
+  import chroma from 'chroma-js';
 
   let scales = 16;
   let saturationStep = 10;
   let color = '';
 
-  $: colors = $page.url.searchParams.getAll('color');
+  $: colors = $page.url.searchParams.getAll('color').filter((v) => chroma.valid(v));
 </script>
 
-<main class="p-2 mx-auto flex gap-2 h-screen">
-  <div class="w-80 bg-white rounded-xl border flex flex-col gap-2 overflow-auto">
+<main class="mx-auto flex gap-2 h-screen">
+  <div class="w-80 bg-white rounded-xl border flex flex-col gap-2 overflow-auto shadow-sm m-2 mr-0">
     <header class="border-b px-4 py-2">
-      <h1 class="text-lg font-medium flex items-center gap-1">
-        <PaletteIcon width="24px" height="24px" />
+      <h1 class="flex items-center gap-1">
+        <PaletteIcon width="20px" height="20px" />
         Protocol Colorizer
       </h1>
     </header>
@@ -29,6 +30,8 @@
       class="px-4 py-2 flex-1 flex flex-col gap-2"
       on:submit={(e) => {
         e.preventDefault();
+
+        if (!color) return;
 
         const params = $page.url.searchParams;
         params.append('color', color);
@@ -42,23 +45,23 @@
       }}
     >
       <div>
-        <label for="color" class="block mb-1">Base color</label>
-        <Input id="color" maxlength={7} bind:value={color} placeholder="#000000" />
+        <label for="color" class="block mb-1 text-sm">Base color</label>
+        <Input id="color" bind:value={color} placeholder="Type your color" />
       </div>
       <Button type="submit">Create palette</Button>
     </form>
 
     <footer class="border-t p-4">
-      <h3 class="flex items-center gap-1 text-gray-500 mb-3">
-        <SlidersHorizontal width="20px" height="20px" />
+      <h3 class="text-sm flex items-center gap-1 text-gray-500 mb-3">
+        <SlidersHorizontal width="16px" height="16px" />
         Configuration
       </h3>
       <div transition:slide>
         <div class="flex flex-col gap-3">
           <div>
-            <label for="saturation-step" class="block mb-1">
+            <label for="saturation-step" class="block mb-1 text-sm">
               Saturation step:
-              <span class="tabular-nums font-mono opacity-40">{saturationStep}</span>
+              <span class="tabular-nums font-mono opacity-50">{saturationStep}</span>
             </label>
             <Input
               id="saturation-step"
@@ -70,9 +73,9 @@
             />
           </div>
           <div>
-            <label for="scales" class="block mb-1">
+            <label for="scales" class="block mb-1 text-sm">
               Scales:
-              <span class="tabular-nums font-mono opacity-40">{scales}</span>
+              <span class="tabular-nums font-mono opacity-50">{scales}</span>
             </label>
             <Input id="scales" type="number" bind:value={scales} step={1} min={8} max={20} />
           </div>
@@ -81,9 +84,9 @@
     </footer>
   </div>
 
-  <div class="bg-white p-2 rounded-xl flex-1 border overflow-auto flex flex-col gap-3">
+  <div class="flex-1 overflow-auto flex flex-col gap-2 p-2 pl-0">
     {#each colors as c}
-      <Palette color={c} />
+      <Palette color={c} scales={+scales} saturationStep={+saturationStep} />
     {:else}
       <div class="flex h-full w-full items-center justify-center">
         <div class="text-center flex flex-col items-center">

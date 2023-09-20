@@ -10,7 +10,7 @@
 
 <button
   class={cn(
-    'inline-flex items-center justify-center rounded-lg font-medium ring-offset-background transition-all outline-none ring-black/10',
+    'text-sm inline-flex items-center justify-center rounded-lg font-medium ring-offset-background transition-all outline-none ring-black/10',
     'focus-visible:ring-4',
     'active:ring-4',
     'disabled:pointer-events-none disabled:opacity-50',
