@@ -3,7 +3,7 @@
   import { createEventDispatcher } from 'svelte';
 
   import { cn } from '$lib/utils';
-  import { getC, getL, getOklch, type OKLCH } from '$lib/color';
+  import { getC, getH, getL, getOklch, type OKLCH } from '$lib/color';
   import { copyToClipboard } from '$lib/clipboard';
   import { paletteToSvg } from '$lib/svg';
 
@@ -65,21 +65,31 @@
   </div>
   <div class="flex rounded-md mt-2 border border-black/10">
     {#each palette as [l, c, h], i}
-      <div
+      <button
+        on:click={() => {
+          copyToClipboard(getOklch(l, c, h));
+        }}
         class={cn(
-          'flex-1 h-20 bg-[--square-color]',
-          'flex flex-col gap-0.5 items-center justify-center font-mono text-[10px]',
+          'group flex-1 h-32 bg-[--square-color] text-[10px] leading-tight flex flex-col justify-between gap-0.5 items-start p-3 text-left transition-all outline-none',
           i === 0 && 'rounded-l-md',
           i === palette.length - 1 && 'rounded-r-md',
           oklch[0] === l && 'scale-110 rounded-md shadow-lg border',
-          l >= 0.77 ? 'border-black/10 text-black/50' : 'border-white/10 text-white/50'
+          l >= 0.6
+            ? 'border-black/10 text-black/60 hover:text-black focus-visible:text-black'
+            : 'border-white/10 text-white/60 hover:text-white focus-visible:text-white'
         )}
         style="--square-color: {getOklch(l, c, h)}"
       >
-        <span>{i + 1}</span>
-        <span>L{getL(l)}</span>
-        <span>C{getC(c)}</span>
-      </div>
+        <div class="flex items-center justify-between w-full">
+          <span class="tabular-nums">{i + 1}</span>
+          <Copy class="opacity-0 group-hover:opacity-100 transition-all" />
+        </div>
+        <div class="flex flex-col gap-0.5 font-mono">
+          <span>L{getL(l)}</span>
+          <span>C{getC(c)}</span>
+          <span>H{getH(h)}</span>
+        </div>
+      </button>
     {/each}
   </div>
 </div>
