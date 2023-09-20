@@ -9,9 +9,9 @@ export const generatePalette = (color: string, config: {
 } = {}): OKLCH[] => {
   if (!chroma.valid(color)) return [];
 
-  const scales = Number(config.scales) || 12;
-  const chromaStep = Number(config.chromaStep) || 0.02;
-  const chromaMinimum = Number(config.chromaMinimum) || 0.05;
+  const scales = Number(config.scales) ?? 12;
+  const chromaStep = Number(config.chromaStep) ?? 0.02;
+  const chromaMinimum = Number(config.chromaMinimum) ?? 0.05;
 
   const [l, c, h] = chroma(color).oklch();
   const step = 1 / scales; // how much to increment l by on each step
