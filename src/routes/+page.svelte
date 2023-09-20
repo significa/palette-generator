@@ -1,21 +1,37 @@
 <script lang="ts">
-  import Input from '$lib/input.svelte';
+  import Input from '$components/input.svelte';
   import { slide } from 'svelte/transition';
-  import Button from '$lib/button.svelte';
+  import Button from '$components/button.svelte';
   import Palette from './palette.svelte';
-  import Bear from '$lib/bear.svelte';
+  import Bear from '$components/bear.svelte';
   import { page } from '$app/stores';
   import { goto } from '$app/navigation';
-  import SlidersHorizontal from '$lib/icons/sliders-horizontal.svelte';
-  import PaletteIcon from '$lib/icons/palette.svelte';
+  import SlidersHorizontal from '../components/icons/sliders-horizontal.svelte';
+  import PaletteIcon from '../components/icons/palette.svelte';
   import chroma from 'chroma-js';
+  import { generatePalette } from '$lib/color';
+  import { cn, getColorsFromParams, getConfigFromParams, getParamsFromConfig } from '$lib/utils';
+  import { browser } from '$app/environment';
+  import { DEFAULT } from '$lib/constants';
+  import ConfigurationField from './configuration-field.svelte';
 
-  let scales = 12;
-  let chromaStep = 0.03;
-  let minChroma = 0.05;
+  const config = getConfigFromParams($page.url.searchParams);
+
   let color = '';
+  let invalid = false;
 
-  $: colors = $page.url.searchParams.getAll('color').filter((v) => chroma.valid(v));
+  let scales = config.scales;
+  let chromaStep = config.chromaStep;
+  let chromaMinimum = config.chromaMinimum;
+
+  let colors = config.colors;
+
+  $: if (browser) {
+    const params = getParamsFromConfig({ colors, scales, chromaStep, chromaMinimum });
+
+    // 'goto' causes the input to loose focus, so we use 'replaceState' instead
+    window.history.replaceState(null, '', `?${params.toString()}`);
+  }
 </script>
 
 <main class="mx-auto flex gap-2 h-screen">
@@ -32,22 +48,31 @@
       on:submit={(e) => {
         e.preventDefault();
 
-        if (!color || !chroma.valid(color)) return;
+        if (!color) return;
 
-        const params = $page.url.searchParams;
-        params.append('color', color);
+        if (!chroma.valid(color)) {
+          invalid = true;
+          return;
+        }
 
         // assign variables
-        colors = params.getAll('color');
+        colors = [color, ...getColorsFromParams($page.url.searchParams)];
         color = '';
-
-        // save in URL
-        goto($page.url.pathname + '?' + params.toString());
       }}
     >
       <div>
         <label for="color" class="block mb-1 text-sm">Base color</label>
-        <Input id="color" bind:value={color} placeholder="Type your color" />
+        <Input
+          autocomplete="off"
+          on:focus={() => (invalid = false)}
+          class={cn(invalid && 'border-pink-300')}
+          id="color"
+          bind:value={color}
+          placeholder="Type your color"
+        />
+        {#if invalid}
+          <span class="text-pink-500 text-xs">Invalid color</span>
+        {/if}
       </div>
       <Button class="mt-2 w-full" type="submit">Create palette</Button>
       <span class="block mt-2 text-xs text-gray-400"
@@ -63,19 +88,27 @@
       </h3>
       <div transition:slide>
         <div class="flex flex-col gap-3">
-          <div>
-            <label for="scales" class="block mb-1 text-sm">
-              Scales:
-              <span class="tabular-nums font-mono opacity-50">{scales}</span>
-            </label>
+          <ConfigurationField
+            id="scales"
+            label="Scales"
+            description="The amount of scales to generate"
+            value={scales}
+            on:reset={() => {
+              scales = DEFAULT.scales;
+            }}
+          >
             <Input id="scales" type="number" bind:value={scales} step={1} min={8} max={20} />
-            <span class="block mt-2 text-xs text-gray-400">The amount of scales to generate</span>
-          </div>
-          <div>
-            <label for="chroma-step" class="block mb-1 text-sm">
-              Chroma step:
-              <span class="tabular-nums font-mono opacity-50">{chromaStep}</span>
-            </label>
+          </ConfigurationField>
+
+          <ConfigurationField
+            id="chroma-step"
+            label="Saturation step"
+            description="The amount of saturation that reduces as we go further from the base color"
+            value={chromaStep}
+            on:reset={() => {
+              chromaStep = DEFAULT.chromaStep;
+            }}
+          >
             <Input
               id="chroma-step"
               type="number"
@@ -84,28 +117,27 @@
               min={0}
               max={0.1}
             />
-            <span class="block mt-2 text-xs text-gray-400"
-              >The amount of chroma that reduces as we go further from the base color</span
-            >
-          </div>
-          <div>
-            <label for="min-chroma" class="block mb-1 text-sm">
-              Minimum chroma:
-              <span class="tabular-nums font-mono opacity-50">{minChroma}</span>
-            </label>
+          </ConfigurationField>
+
+          <ConfigurationField
+            id="chroma-min"
+            label="Minimum saturation"
+            description="The minimum amount of saturation allowed. The base color's saturation will be used instead if
+          it's below this value."
+            value={chromaMinimum}
+            on:reset={() => {
+              chromaMinimum = DEFAULT.chromaMinimum;
+            }}
+          >
             <Input
-              id="min-chroma"
+              id="chroma-min"
               type="number"
-              bind:value={minChroma}
+              bind:value={chromaMinimum}
               step={0.001}
               min={0}
               max={0.1}
             />
-            <span class="block mt-2 text-xs text-gray-400"
-              >The minimum amount of chroma allowed. The base color's chroma will be used instead if
-              it's below this value.</span
-            >
-          </div>
+          </ConfigurationField>
         </div>
       </div>
     </footer>
@@ -113,7 +145,7 @@
 
   <div class="flex-1 overflow-auto flex flex-col gap-2 p-2 pl-0">
     {#each colors as c}
-      <Palette color={c} scales={+scales} chromaStep={+chromaStep} minChroma={+minChroma} />
+      <Palette color={c} palette={generatePalette(c, { scales, chromaStep, chromaMinimum })} />
     {:else}
       <div class="flex h-full w-full items-center justify-center">
         <div class="text-center flex flex-col items-center">
