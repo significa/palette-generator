@@ -36,9 +36,9 @@ export function getColorsFromParams(params: URLSearchParams) {
 
 export function getConfigFromParams(params: URLSearchParams) {
   const colors = getColorsFromParams(params);
-  const scales = Number(params.get(PARAMS.scales)) ?? DEFAULT.scales;
-  const chromaStep = Number(params.get(PARAMS.chromaStep)) ?? DEFAULT.chromaStep;
-  const chromaMinimum = Number(params.get(PARAMS.chromaMinimum)) ?? DEFAULT.chromaMinimum;
+  const scales = Number(params.get(PARAMS.scales)) || DEFAULT.scales;
+  const chromaStep = Number(params.get(PARAMS.chromaStep)) || DEFAULT.chromaStep;
+  const chromaMinimum = Number(params.get(PARAMS.chromaMinimum)) || DEFAULT.chromaMinimum;
 
   return { colors, scales, chromaStep, chromaMinimum };
 }
