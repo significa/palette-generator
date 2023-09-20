@@ -8,18 +8,24 @@
 
   export let color: string;
   export let scales: number;
-  export let saturationStep: number;
+  export let chromaStep: number;
+  export let minChroma: number;
 
   $: [l, c, h] = chroma(color).oklch();
   $: step = 1 / scales; // how much to increment l by on each step
   $: index = Math.floor(l / step); // index of the current color
 
-  // an offset to make sure we hit the exact color at the base color step
-  $: lOffset = l - step * index;
+  // a shift to make sure we hit the exact color at the base color step
+  $: lShift = l - step * index;
 
   $: arr = Array.from(Array(scales)).map((_, i) => {
-    const newL = lOffset + step * i;
-    return [newL, c, h];
+    // increment l by the step
+    const newL = lShift + step * i;
+    // reduce chroma as we get further from the base color
+    // don't go below the minimum (the lowest between minChroma or the base color's chroma)
+    const newC = Math.max(Math.min(c, minChroma), c - chromaStep * Math.abs(i - index));
+
+    return [newL, newC, h];
   });
 
   const getL = (l: number) => +(l * 100).toFixed(2) + '%';
@@ -71,7 +77,8 @@
         )}
         style="--square-color: {getOklch(l, c, h)}"
       >
-        <span>{getL(l)}</span>
+        <span>L{getL(l)}</span>
+        <span>C{getC(c)}</span>
       </div>
     {/each}
   </div>
