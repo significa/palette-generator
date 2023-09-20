@@ -29,8 +29,7 @@
   $: if (browser) {
     const params = getParamsFromConfig({ colors, scales, chromaStep, chromaMinimum });
 
-    // 'goto' causes the input to loose focus, so we use 'replaceState' instead
-    window.history.replaceState(null, '', `?${params.toString()}`);
+    goto(`?${params}`, { replaceState: true, keepFocus: true });
   }
 </script>
 
