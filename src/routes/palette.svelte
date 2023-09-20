@@ -1,11 +1,17 @@
 <script lang="ts">
   import chroma from 'chroma-js';
+  import { createEventDispatcher } from 'svelte';
+
+  import { cn } from '$lib/utils';
+  import { getC, getL, getOklch, type OKLCH } from '$lib/color';
+  import { copyToClipboard } from '$lib/clipboard';
+  import { paletteToSvg } from '$lib/svg';
 
   import SmallButton from '$components/small-button.svelte';
   import Copy from '$components/icons/copy.svelte';
   import Trash from '$components/icons/trash.svelte';
-  import { cn } from '$lib/utils';
-  import { getC, getL, getOklch, type OKLCH } from '$lib/color';
+
+  const dispatch = createEventDispatcher<{ delete: string }>();
 
   export let color: string;
   export let palette: OKLCH[];
@@ -20,22 +26,38 @@
         class="border border-black/10 rounded-md w-6 h-6"
         style="background-color: {getOklch(...oklch)};"
       />
-      <SmallButton>
+      <SmallButton
+        on:click={() => {
+          copyToClipboard(color);
+        }}
+      >
         <Copy class="opacity-50" width="16px" height="16px" />
         {color}
       </SmallButton>
 
-      <SmallButton>
+      <SmallButton
+        on:click={() => {
+          copyToClipboard(getOklch(...oklch));
+        }}
+      >
         <Copy class="opacity-50" width="16px" height="16px" />
         {getOklch(...oklch)}
       </SmallButton>
     </div>
     <div class="flex items-center gap-2">
-      <SmallButton>
+      <SmallButton
+        on:click={() => {
+          copyToClipboard(paletteToSvg(palette));
+        }}
+      >
         <Copy class="opacity-50" width="16px" height="16px" />
         Copy SVG
       </SmallButton>
-      <SmallButton>
+      <SmallButton
+        on:click={() => {
+          dispatch('delete', color);
+        }}
+      >
         <Trash class="opacity-50" width="16px" height="16px" />
         Delete
       </SmallButton>

@@ -1,19 +1,24 @@
 <script lang="ts">
-  import Input from '$components/input.svelte';
+  import chroma from 'chroma-js';
   import { slide } from 'svelte/transition';
-  import Button from '$components/button.svelte';
-  import Palette from './palette.svelte';
-  import Bear from '$components/bear.svelte';
+
   import { page } from '$app/stores';
   import { goto } from '$app/navigation';
-  import SlidersHorizontal from '../components/icons/sliders-horizontal.svelte';
-  import PaletteIcon from '../components/icons/palette.svelte';
-  import chroma from 'chroma-js';
-  import { generatePalette } from '$lib/color';
-  import { cn, getColorsFromParams, getConfigFromParams, getParamsFromConfig } from '$lib/utils';
   import { browser } from '$app/environment';
+
   import { DEFAULT } from '$lib/constants';
+  import { generatePalette } from '$lib/color';
+  import { getColorsFromParams, getConfigFromParams, getParamsFromConfig } from '$lib/params';
+  import { cn } from '$lib/utils';
+
+  import Input from '$components/input.svelte';
+  import Button from '$components/button.svelte';
+  import Bear from '$components/bear.svelte';
+  import SlidersHorizontal from '$components/icons/sliders-horizontal.svelte';
+  import PaletteIcon from '$components/icons/palette.svelte';
+
   import ConfigurationField from './configuration-field.svelte';
+  import Palette from './palette.svelte';
 
   const config = getConfigFromParams($page.url.searchParams);
 
@@ -144,7 +149,13 @@
 
   <div class="flex-1 overflow-auto flex flex-col gap-2 p-2 pl-0">
     {#each colors as c}
-      <Palette color={c} palette={generatePalette(c, { scales, chromaStep, chromaMinimum })} />
+      <Palette
+        color={c}
+        palette={generatePalette(c, { scales, chromaStep, chromaMinimum })}
+        on:delete={(event) => {
+          colors = colors.filter((c) => c !== event.detail);
+        }}
+      />
     {:else}
       <div class="flex h-full w-full items-center justify-center">
         <div class="text-center flex flex-col items-center">
