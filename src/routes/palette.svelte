@@ -40,7 +40,7 @@
       />
       <SmallButton
         on:click={() => {
-          copyToClipboard(color);
+          copyToClipboard(color, { id: color });
         }}
       >
         <Copy class="opacity-50" width="16px" height="16px" />
@@ -49,7 +49,7 @@
 
       <SmallButton
         on:click={() => {
-          copyToClipboard(getOklch(...oklch));
+          copyToClipboard(getOklch(...oklch), { id: `${color}-oklch` });
         }}
       >
         <Copy class="opacity-50" width="16px" height="16px" />
@@ -59,7 +59,7 @@
     <div class="flex items-center gap-2">
       <SmallButton
         on:click={() => {
-          copyToClipboard(paletteToSvg(palette));
+          copyToClipboard(paletteToSvg(palette), { id: `${color}-svg` });
         }}
       >
         <Copy class="opacity-50" width="16px" height="16px" />
@@ -79,7 +79,7 @@
     {#each palette as [l, c, h], i}
       <button
         on:click={() => {
-          copyToClipboard(getOklch(l, c, h));
+          copyToClipboard(getOklch(l, c, h), { id: `${color}-${i}` });
         }}
         class={cn(
           'group flex-1 h-32 bg-[--square-color] text-[10px] leading-tight flex flex-col justify-between gap-0.5 items-start p-3 text-left transition-all outline-none',
