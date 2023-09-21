@@ -161,7 +161,7 @@
         <SmallButton
           aria-label="Add override"
           on:click={() => {
-            overrides = [{}, ...overrides];
+            overrides = [...overrides, {}];
           }}
         >
           <Plus />
