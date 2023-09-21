@@ -27,6 +27,8 @@
   });
 
   $: oklch = chroma(color).oklch();
+  $: step = 1 / scales;
+  $: index = Math.floor(oklch[0] / step);
 </script>
 
 <div class="p-2 bg-white border rounded-xl shadow-sm">
@@ -83,7 +85,7 @@
           'group flex-1 h-32 bg-[--square-color] text-[10px] leading-tight flex flex-col justify-between gap-0.5 items-start p-3 text-left transition-all outline-none',
           i === 0 && 'rounded-l-md',
           i === palette.length - 1 && 'rounded-r-md',
-          oklch[0] === l && 'scale-110 rounded-md shadow-lg border',
+          index === i && 'scale-110 rounded-md shadow-lg border',
           l >= 0.6
             ? 'border-black/10 text-black/60 hover:text-black focus-visible:text-black'
             : 'border-white/10 text-white/60 hover:text-white focus-visible:text-white'

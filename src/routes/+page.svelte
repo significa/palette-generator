@@ -65,6 +65,7 @@
         }
 
         // assign variables
+        invalid = false;
         colors = [color, ...getColorsFromParams($page.url.searchParams)];
         color = '';
       }}
@@ -179,7 +180,7 @@
 
       <span class="block mt-4 text-xs text-gray-400"
         >You can add chroma and lightness overrides to specific scales. It will never affect the
-        base color.</span
+        base color. If the chroma override is greater than the original, it will not be applied.</span
       >
     </div>
   </div>

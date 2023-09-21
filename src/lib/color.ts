@@ -31,16 +31,16 @@ export const generatePalette = (color: string, config: {
 
     // overrides
     const override = config.overrides?.find((o) => Number(o.scale) === i + 1);
-
     
     // don't override if the step is the base color
     if (override && i !== index) {
-      const c = Number(override.chroma)
-      const l = Number(override.lightness)
+      const c = override.chroma || override.chroma === 0 ? Number(override.chroma) : undefined
+      const l = override.lightness || override.lightness === 0 ? Number(override.lightness) : undefined
 
-      if (!isNaN(c)) newC = c
+      // chroma overrides can't be higher than what it already was
+      if (c !== undefined && !isNaN(c)) newC = Math.min(newC, c)
 
-      if (!isNaN(l)) newL = l
+      if (l !== undefined && !isNaN(l)) newL = l
     }
 
     return [newL, newC, h];

@@ -32,13 +32,13 @@ export function getParamsFromConfig({
   if (chromaStep !== DEFAULT.chromaStep) params.set(PARAMS.chromaStep, chromaStep.toString());
   if (chromaMinimum !== DEFAULT.chromaMinimum) params.set(PARAMS.chromaMinimum, chromaMinimum.toString());
   if (overrides.length) params.set(PARAMS.overrides, overrides.map((o) => {
-    const s = Number(o.scale);
-    const c = Number(o.chroma);
-    const l = Number(o.lightness);
+    const s = o.scale || o.scale === 0 ? o.scale : undefined;
+    const c = o.chroma || o.chroma === 0 ? o.chroma : undefined;
+    const l = o.lightness || o.lightness === 0 ? o.lightness : undefined;
 
-    const scale = isValidNumber(s) ? `s${s}` : '';
-    const chroma = isValidNumber(c) ? `c${c}` : '';
-    const lightness = isValidNumber(l) ? `l${l}` : '';
+    const scale = isValidNumber(Number(s)) ? `s${Number(s)}` : '';
+    const chroma = isValidNumber(Number(c)) ? `c${Number(c)}` : '';
+    const lightness = isValidNumber(Number(l)) ? `l${Number(l)}` : '';
 
     return `${scale}${chroma}${lightness}`;
   }).join(','));
