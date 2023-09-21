@@ -7,7 +7,7 @@
   import { browser } from '$app/environment';
 
   import { DEFAULT } from '$lib/constants';
-  import { generatePalette } from '$lib/color';
+  import type { Override } from '$lib/color';
   import { getColorsFromParams, getConfigFromParams, getParamsFromConfig } from '$lib/params';
   import { cn } from '$lib/utils';
 
@@ -15,24 +15,29 @@
   import Button from '$components/button.svelte';
   import Bear from '$components/bear.svelte';
   import SlidersHorizontal from '$components/icons/sliders-horizontal.svelte';
+  import Crosshair from '$components/icons/crosshair.svelte';
   import PaletteIcon from '$components/icons/palette.svelte';
 
   import ConfigurationField from './configuration-field.svelte';
   import Palette from './palette.svelte';
+  import Plus from '$components/icons/plus.svelte';
+  import SmallButton from '$components/small-button.svelte';
+  import OverrideRow from './override-row.svelte';
 
   const config = getConfigFromParams($page.url.searchParams);
 
   let color = '';
   let invalid = false;
 
+  let colors = config.colors;
+
   let scales = config.scales;
   let chromaStep = config.chromaStep;
   let chromaMinimum = config.chromaMinimum;
-
-  let colors = config.colors;
+  let overrides: Override[] = config.overrides;
 
   $: if (browser) {
-    const params = getParamsFromConfig({ colors, scales, chromaStep, chromaMinimum });
+    const params = getParamsFromConfig({ colors, scales, chromaStep, chromaMinimum, overrides });
 
     goto(`?${params}`, { replaceState: true, keepFocus: true });
   }
@@ -85,9 +90,9 @@
       >
     </form>
 
-    <footer class="border-t p-4">
+    <div class="border-t p-4">
       <h3 class="text-sm flex items-center gap-1 text-gray-500 mb-3">
-        <SlidersHorizontal width="16px" height="16px" />
+        <SlidersHorizontal width="15px" height="15px" />
         Configuration
       </h3>
       <div transition:slide>
@@ -144,14 +149,49 @@
           </ConfigurationField>
         </div>
       </div>
-    </footer>
+    </div>
+
+    <div class="border-t p-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-sm flex items-center gap-1 text-gray-500">
+          <Crosshair width="15px" height="15px" />
+          Overrides
+        </h3>
+        <SmallButton
+          aria-label="Add override"
+          on:click={() => {
+            overrides = [{}, ...overrides];
+          }}
+        >
+          <Plus />
+        </SmallButton>
+      </div>
+
+      {#each overrides as override, i}
+        <OverrideRow
+          number={i + 1}
+          bind:override
+          on:delete={() => {
+            overrides = overrides.filter((_, index) => index !== i);
+          }}
+        />
+      {/each}
+
+      <span class="block mt-4 text-xs text-gray-400"
+        >You can add chroma and lightness overrides to specific scales. It will never affect the
+        base color.</span
+      >
+    </div>
   </div>
 
   <div class="flex-1 overflow-auto flex flex-col gap-2 p-2 pl-0">
     {#each colors as c}
       <Palette
         color={c}
-        palette={generatePalette(c, { scales, chromaStep, chromaMinimum })}
+        {scales}
+        {chromaStep}
+        {chromaMinimum}
+        {overrides}
         on:delete={(event) => {
           colors = colors.filter((c) => c !== event.detail);
         }}

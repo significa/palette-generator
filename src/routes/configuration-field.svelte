@@ -1,10 +1,11 @@
 <script lang="ts">
   import Reset from '$components/icons/reset.svelte';
+  import MinimalButton from '$components/minimal-button.svelte';
   import { createEventDispatcher } from 'svelte';
 
   export let id: string;
-  export let value: number;
   export let label: string;
+  export let value: number | undefined = undefined;
   export let description: string | undefined = undefined;
 
   const dispatch = createEventDispatcher<{ reset: undefined }>();
@@ -13,15 +14,13 @@
 <div>
   <div class="flex items-center justify-between mb-1 text-sm">
     <label for={id}>
-      {label}:
-      <span class="tabular-nums font-mono opacity-50">{value}</span>
+      {label}{#if value !== undefined}: <span class="tabular-nums font-mono opacity-50"
+          >{value}</span
+        >{/if}
     </label>
-    <button
-      on:click={() => dispatch('reset')}
-      class="text-gray-500 transition-all hover:text-gray-800 focus-visible:text-gray-800 outline-none ring-black/5 focus-visible:ring-4 rounded-md"
-    >
+    <MinimalButton on:click={() => dispatch('reset')}>
       <Reset />
-    </button>
+    </MinimalButton>
   </div>
   <slot />
   {#if description}

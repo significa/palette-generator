@@ -3,7 +3,7 @@
   import { createEventDispatcher } from 'svelte';
 
   import { cn } from '$lib/utils';
-  import { getC, getH, getL, getOklch, type OKLCH } from '$lib/color';
+  import { generatePalette, getC, getH, getL, getOklch, type Override } from '$lib/color';
   import { copyToClipboard } from '$lib/clipboard';
   import { paletteToSvg } from '$lib/svg';
 
@@ -14,7 +14,17 @@
   const dispatch = createEventDispatcher<{ delete: string }>();
 
   export let color: string;
-  export let palette: OKLCH[];
+  export let scales: number;
+  export let chromaStep: number;
+  export let chromaMinimum: number;
+  export let overrides: Override[];
+
+  $: palette = generatePalette(color, {
+    scales,
+    chromaStep,
+    chromaMinimum,
+    overrides
+  });
 
   $: oklch = chroma(color).oklch();
 </script>

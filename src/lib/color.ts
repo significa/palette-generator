@@ -1,11 +1,13 @@
 import chroma from "chroma-js";
 
 export type OKLCH = [number, number, number];
+export type Override = { scale?: number; chroma?: number; lightness?: number; };
 
 export const generatePalette = (color: string, config: {
   scales?: number;
   chromaStep?: number;
   chromaMinimum?: number;
+  overrides?: Override[];
 } = {}): OKLCH[] => {
   if (!chroma.valid(color)) return [];
 
@@ -22,10 +24,24 @@ export const generatePalette = (color: string, config: {
 
   return Array.from(Array(scales)).map((_, i) => {
     // increment l by the step
-    const newL = lShift + step * i;
+    let newL = lShift + step * i;
     // reduce chroma as we get further from the base color
     // don't go below the minimum (the lowest between minChroma or the base color's chroma)
-    const newC = Math.max(Math.min(c, chromaMinimum), c - chromaStep * Math.abs(i - index));
+    let newC = Math.max(Math.min(c, chromaMinimum), c - chromaStep * Math.abs(i - index));
+
+    // overrides
+    const override = config.overrides?.find((o) => Number(o.scale) === i + 1);
+
+    
+    // don't override if the step is the base color
+    if (override && i !== index) {
+      const c = Number(override.chroma)
+      const l = Number(override.lightness)
+
+      if (!isNaN(c)) newC = c
+
+      if (!isNaN(l)) newL = l
+    }
 
     return [newL, newC, h];
   });
