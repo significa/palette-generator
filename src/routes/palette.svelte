@@ -79,7 +79,7 @@
     {#each palette as [l, c, h], i}
       <button
         on:click={() => {
-          copyToClipboard(getOklch(l, c, h), { id: `${color}-${i}` });
+          copyToClipboard(chroma(color).hex(), { id: `${color}-hex-${i}` });
         }}
         class={cn(
           'group flex-1 h-32 bg-[--square-color] text-[10px] leading-tight flex flex-col justify-between gap-0.5 items-start p-3 text-left transition-all outline-none',
