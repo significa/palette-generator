@@ -11,8 +11,8 @@
   export let curve: number[];
 </script>
 
-<div class="bg-black text-white rounded-xl shadow-lg">
-  <div class="flex items-center justify-between border-b border-white/[0.15] p-3">
+<div class="bg-black text-white rounded-xl shadow-lg border border-white/10">
+  <div class="flex items-center justify-between border-b border-white/10 p-3">
     <h3 class="text-sm flex items-center gap-1">
       <Pencil class="opacity-50" width="15px" height="15px" />
       Edit Curve
