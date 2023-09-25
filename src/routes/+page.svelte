@@ -25,6 +25,8 @@
   import Pencil from '$components/icons/pencil.svelte';
   import Curve from '$components/curve.svelte';
   import EditCurvePanel from '$components/edit-curve-panel.svelte';
+  import MinimalButton from '$components/minimal-button.svelte';
+  import Reset from '$components/icons/reset.svelte';
 
   const config = getConfigFromParams($page.url.searchParams);
 
@@ -169,6 +171,14 @@
           <Pencil width="15px" height="15px" />
           Curve
         </h3>
+        <MinimalButton
+          aria-label="Reset curve"
+          on:click={() => {
+            curve = DEFAULT.curve;
+          }}
+        >
+          <Reset />
+        </MinimalButton>
       </div>
 
       <div class="mt-3">
