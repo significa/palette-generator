@@ -174,7 +174,7 @@
         <MinimalButton
           aria-label="Reset curve"
           on:click={() => {
-            curve = DEFAULT.curve;
+            curve = [...DEFAULT.curve];
           }}
         >
           <Reset />

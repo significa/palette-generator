@@ -14,8 +14,8 @@
 <div class="bg-black text-white rounded-xl shadow-lg">
   <div class="flex items-center justify-between border-b border-white/[0.15] p-3">
     <h3 class="text-sm flex items-center gap-1">
-      <Pencil width="15px" height="15px" />
-      Curve
+      <Pencil class="opacity-50" width="15px" height="15px" />
+      Edit Curve
     </h3>
 
     <MinimalButton
@@ -27,7 +27,7 @@
     </MinimalButton>
   </div>
 
-  <div class="flex items-center justify-between gap-2 overflow-auto p-3 w-full">
+  <div class="flex items-center gap-2 overflow-auto p-3 w-full">
     {#each curve as _, i}
       <div class="flex flex-col items-center gap-2 w-6">
         <input
@@ -36,7 +36,7 @@
         />
         <EditCurveInput bind:value={curve[i]} />
         <MinimalButton
-          disabled={curve.length <= 8}
+          disabled={curve.length <= 4}
           on:click={() => {
             dispatch('delete', i);
           }}
