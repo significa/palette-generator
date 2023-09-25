@@ -20,8 +20,8 @@
   $: oklch = chroma(color).oklch();
 </script>
 
-<div class="p-2 bg-white border rounded-xl shadow-sm">
-  <div class="flex items-center justify-between">
+<div class="bg-white border rounded-xl shadow-sm">
+  <div class="flex items-center justify-between p-3 pb-0">
     <div class="flex items-center gap-2">
       <div
         class="border border-black/10 rounded-md w-6 h-6"
@@ -66,14 +66,14 @@
       </SmallButton>
     </div>
   </div>
-  <div class="flex rounded-md mt-2 border border-black/10">
+  <div class="flex mt-2 overflow-auto p-3 pt-2">
     {#each palette as [l, c, h], i}
       <button
         on:click={() => {
           copyToClipboard(chroma(color).hex(), { id: `${color}-hex-${i}` });
         }}
         class={cn(
-          'group flex-1 h-32 bg-[--square-color] text-[10px] leading-tight flex flex-col justify-between gap-0.5 items-start p-3 text-left transition-all outline-none',
+          'group min-w-[100px] flex-1 h-32 bg-[--square-color] text-[10px] leading-tight flex flex-col justify-between gap-0.5 items-start p-3 text-left transition-all outline-none',
           i === 0 && 'rounded-l-md',
           i === palette.length - 1 && 'rounded-r-md',
           colorIndex === i && 'scale-110 rounded-md shadow-lg border',
