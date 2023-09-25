@@ -17,13 +17,14 @@
   import SlidersHorizontal from '$components/icons/sliders-horizontal.svelte';
   import Crosshair from '$components/icons/crosshair.svelte';
   import PaletteIcon from '$components/icons/palette.svelte';
-
-  import ConfigurationField from './configuration-field.svelte';
-  import Palette from './palette.svelte';
+  import ConfigurationField from '$components/configuration-field.svelte';
+  import Palette from '$components/palette.svelte';
   import Plus from '$components/icons/plus.svelte';
   import SmallButton from '$components/small-button.svelte';
-  import RepeatableRow from './repeatable-row.svelte';
+  import RepeatableRow from '$components/repeatable-row.svelte';
   import Pencil from '$components/icons/pencil.svelte';
+  import Curve from '$components/curve.svelte';
+  import EditCurvePanel from '$components/edit-curve-panel.svelte';
 
   const config = getConfigFromParams($page.url.searchParams);
 
@@ -168,34 +169,21 @@
           <Pencil width="15px" height="15px" />
           Curve
         </h3>
-        <SmallButton
-          aria-label="Add override"
-          on:click={() => {
-            curve = [...curve, curve[curve.length - 1] ?? 1];
-          }}
-        >
-          <Plus />
-        </SmallButton>
       </div>
 
-      {#each curve as _, i}
-        <RepeatableRow
-          label="Point {i + 1}"
-          isDeletable={curve.length > 2}
-          on:delete={() => {
-            curve = curve.filter((_, index) => index !== i);
-          }}
-        >
-          <Input
-            type="number"
-            placeholder="Scale"
-            bind:value={curve[i]}
-            min={0}
-            max={1}
-            step={0.1}
+      <div class="mt-3">
+        <Curve {curve}>
+          <EditCurvePanel
+            bind:curve
+            on:create={() => {
+              curve = [...curve, curve[curve.length - 1] ?? 1];
+            }}
+            on:delete={(event) => {
+              curve = curve.filter((_, index) => index !== event.detail);
+            }}
           />
-        </RepeatableRow>
-      {/each}
+        </Curve>
+      </div>
 
       <span class="block mt-4 text-xs text-gray-400"
         >You can create your own lightness curve. The numbers between steps will be interpolated

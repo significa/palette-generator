@@ -13,6 +13,7 @@
     "format": "prettier --plugin-search-dir . --write ."
   },
   "devDependencies": {
+    "@melt-ui/svelte": "^0.50.0",
     "@significa/svelte-toaster": "^0.0.2",
     "@sveltejs/adapter-auto": "^2.0.0",
     "@sveltejs/kit": "^1.20.4",

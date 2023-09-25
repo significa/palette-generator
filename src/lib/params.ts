@@ -46,7 +46,9 @@ export function getParamsFromConfig({
     return `${scale}${chroma}${lightness}`;
   }).join(','));
   // if there is a curve and it's different than the default
-  if (curve.length && curve.some((n, i) => Number(n) !== DEFAULT.curve[i])) params.set(PARAMS.curve, curve.join(','));
+  if (curve.length && (curve.length !== DEFAULT.curve.length || curve.some((n, i) => Number(n) !== DEFAULT.curve[i]))) {
+    params.set(PARAMS.curve, curve.join(','))
+  }
 
   return params;
 }
@@ -72,7 +74,7 @@ export function getConfigFromParams(params: URLSearchParams) {
       lightness: isValidNumber(lightness) ? lightness : undefined,
     }
   }) ?? [];
-  const curve = params.get(PARAMS.curve)?.split(',').map((v) => Number(v)).filter((n) => !isNaN(n)) ?? DEFAULT.curve;
+  const curve = params.get(PARAMS.curve)?.split(',').map((v) => Number(v)).filter((n) => !isNaN(n)) ?? [...DEFAULT.curve];
 
   return { colors, scales, chromaStep, chromaMinimum, overrides, curve };
 }
