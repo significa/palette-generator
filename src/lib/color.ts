@@ -1,30 +1,63 @@
 import chroma from "chroma-js";
+import { DEFAULT } from "./constants";
 
 export type OKLCH = [number, number, number];
 export type Override = { scale?: number; chroma?: number; lightness?: number; };
+
+// given an array of numbers, generate a new array with a given length.
+// the new numbers will be interpolated from the original array.
+// so the curve is linear between any points in the original array.
+function resizeNumberArray(arr: number[], newSize: number) {
+  const originalSize = arr.length;
+  const step = (originalSize - 1) / (newSize - 1);
+  
+  return Array.from({ length: newSize }, (_, index) => {
+    const leftIndex = Math.floor(index * step);
+    const rightIndex = Math.ceil(index * step);
+    const weight = index * step - leftIndex;
+    
+    if (leftIndex === rightIndex) {
+      return arr[leftIndex];
+    } else {
+      return (1 - weight) * arr[leftIndex] + weight * arr[rightIndex];
+    }
+  });
+}
+
+// function that finds the closest number in an array of numbers
+function findClosestNumber(arr: number[], target: number) {
+  return arr.reduce((prev, curr) => {
+    return Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev;
+  });
+}
 
 export const generatePalette = (color: string, config: {
   scales?: number;
   chromaStep?: number;
   chromaMinimum?: number;
   overrides?: Override[];
-} = {}): OKLCH[] => {
-  if (!chroma.valid(color)) return [];
+  curve?: number[];
+} = {}): { palette?: OKLCH[]; index?: number } => {
+  if (!chroma.valid(color)) return {};
 
-  const scales = Number(config.scales) ?? 12;
-  const chromaStep = Number(config.chromaStep) ?? 0.02;
-  const chromaMinimum = Number(config.chromaMinimum) ?? 0.05;
+  const scales = Number(config.scales) ?? DEFAULT.scales;
+  const chromaStep = Number(config.chromaStep) ?? DEFAULT.chromaStep;
+  const chromaMinimum = Number(config.chromaMinimum) ?? DEFAULT.chromaMinimum;
+  const curve = config.curve?.map(Number) ?? DEFAULT.curve;
 
   const [l, c, h] = chroma(color).oklch();
-  const step = 1 / scales; // how much to increment l by on each step
-  const index = Math.floor(l / step); // index of the current color
 
-  // a shift to make sure we hit the exact color at the base color step
-  const lShift = l - step * index;
+  const curveArr = resizeNumberArray(curve, scales);
 
-  return Array.from(Array(scales)).map((_, i) => {
-    // increment l by the step
-    let newL = lShift + step * i;
+  const closest = findClosestNumber(curveArr, l); // find the closest number in the curve to the base color's lightness
+  const shift = closest - l; // how much to shift the curve to match the base color's lightness
+  const index = curveArr.indexOf(closest); // index of the closest number in the curve
+
+  const palette: OKLCH[] = Array.from(Array(scales)).map((_, i) => {
+    // shift the curve to match the base color's lightness
+    // don't go below 0 or above 100
+    let newL = Math.min(Math.max(curveArr[i] - shift, 0), 1);
+
     // reduce chroma as we get further from the base color
     // don't go below the minimum (the lowest between minChroma or the base color's chroma)
     let newC = Math.max(Math.min(c, chromaMinimum), c - chromaStep * Math.abs(i - index));
@@ -45,6 +78,8 @@ export const generatePalette = (color: string, config: {
 
     return [newL, newC, h];
   });
+
+  return { palette, index }
 }
 
 export const getL = (l: number) => +(l * 100).toFixed(2) + '%';

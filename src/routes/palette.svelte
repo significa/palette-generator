@@ -3,7 +3,7 @@
   import { createEventDispatcher } from 'svelte';
 
   import { cn } from '$lib/utils';
-  import { generatePalette, getC, getH, getL, getOklch, type Override } from '$lib/color';
+  import { getC, getH, getL, getOklch, type OKLCH } from '$lib/color';
   import { copyToClipboard } from '$lib/clipboard';
   import { paletteToSvg } from '$lib/svg';
 
@@ -14,21 +14,10 @@
   const dispatch = createEventDispatcher<{ delete: string }>();
 
   export let color: string;
-  export let scales: number;
-  export let chromaStep: number;
-  export let chromaMinimum: number;
-  export let overrides: Override[];
-
-  $: palette = generatePalette(color, {
-    scales,
-    chromaStep,
-    chromaMinimum,
-    overrides
-  });
+  export let palette: OKLCH[];
+  export let colorIndex: number;
 
   $: oklch = chroma(color).oklch();
-  $: step = 1 / scales;
-  $: index = Math.floor(oklch[0] / step);
 </script>
 
 <div class="p-2 bg-white border rounded-xl shadow-sm">
@@ -59,7 +48,9 @@
     <div class="flex items-center gap-2">
       <SmallButton
         on:click={() => {
-          copyToClipboard(paletteToSvg(palette), { id: `${color}-svg` });
+          if (palette) {
+            copyToClipboard(paletteToSvg(palette), { id: `${color}-svg` });
+          }
         }}
       >
         <Copy class="opacity-50" width="16px" height="16px" />
@@ -85,7 +76,7 @@
           'group flex-1 h-32 bg-[--square-color] text-[10px] leading-tight flex flex-col justify-between gap-0.5 items-start p-3 text-left transition-all outline-none',
           i === 0 && 'rounded-l-md',
           i === palette.length - 1 && 'rounded-r-md',
-          index === i && 'scale-110 rounded-md shadow-lg border',
+          colorIndex === i && 'scale-110 rounded-md shadow-lg border',
           l >= 0.6
             ? 'border-black/10 text-black/60 hover:text-black focus-visible:text-black'
             : 'border-white/10 text-white/60 hover:text-white focus-visible:text-white'

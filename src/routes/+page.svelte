@@ -7,7 +7,7 @@
   import { browser } from '$app/environment';
 
   import { DEFAULT } from '$lib/constants';
-  import type { Override } from '$lib/color';
+  import { generatePalette, type Override } from '$lib/color';
   import { getColorsFromParams, getConfigFromParams, getParamsFromConfig } from '$lib/params';
   import { cn } from '$lib/utils';
 
@@ -22,7 +22,7 @@
   import Palette from './palette.svelte';
   import Plus from '$components/icons/plus.svelte';
   import SmallButton from '$components/small-button.svelte';
-  import OverrideRow from './override-row.svelte';
+  import RepeatableRow from './repeatable-row.svelte';
 
   const config = getConfigFromParams($page.url.searchParams);
 
@@ -35,9 +35,17 @@
   let chromaStep = config.chromaStep;
   let chromaMinimum = config.chromaMinimum;
   let overrides: Override[] = config.overrides;
+  let curve = config.curve;
 
   $: if (browser) {
-    const params = getParamsFromConfig({ colors, scales, chromaStep, chromaMinimum, overrides });
+    const params = getParamsFromConfig({
+      colors,
+      scales,
+      chromaStep,
+      chromaMinimum,
+      overrides,
+      curve
+    });
 
     goto(`?${params}`, { replaceState: true, keepFocus: true });
   }
@@ -152,6 +160,49 @@
       </div>
     </div>
 
+    <!-- Curve -->
+    <div class="border-t p-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-sm flex items-center gap-1 text-gray-500">
+          <Crosshair width="15px" height="15px" />
+          Curve
+        </h3>
+        <SmallButton
+          aria-label="Add override"
+          on:click={() => {
+            curve = [...curve, curve[curve.length - 1] ?? 1];
+          }}
+        >
+          <Plus />
+        </SmallButton>
+      </div>
+
+      {#each curve as _, i}
+        <RepeatableRow
+          label="Point {i + 1}"
+          isDeletable={curve.length > 2}
+          on:delete={() => {
+            curve = curve.filter((_, index) => index !== i);
+          }}
+        >
+          <Input
+            type="number"
+            placeholder="Scale"
+            bind:value={curve[i]}
+            min={0}
+            max={1}
+            step={0.1}
+          />
+        </RepeatableRow>
+      {/each}
+
+      <span class="block mt-4 text-xs text-gray-400"
+        >You can create your own lightness curve. The numbers between steps will be interpolated
+        linearly. A shift will be applied to make sure your base color remains unchanged.</span
+      >
+    </div>
+
+    <!-- Overrides -->
     <div class="border-t p-4">
       <div class="flex items-center justify-between">
         <h3 class="text-sm flex items-center gap-1 text-gray-500">
@@ -169,13 +220,30 @@
       </div>
 
       {#each overrides as override, i}
-        <OverrideRow
-          number={i + 1}
-          bind:override
+        <RepeatableRow
+          label="Override {i + 1}"
           on:delete={() => {
             overrides = overrides.filter((_, index) => index !== i);
           }}
-        />
+        >
+          <Input type="number" placeholder="Scale" bind:value={override.scale} min={0} max={99} />
+          <Input
+            type="number"
+            placeholder="C"
+            bind:value={override.chroma}
+            step={0.001}
+            min={0}
+            max={0.37}
+          />
+          <Input
+            type="number"
+            placeholder="L"
+            bind:value={override.lightness}
+            step={0.01}
+            min={0}
+            max={1}
+          />
+        </RepeatableRow>
       {/each}
 
       <span class="block mt-4 text-xs text-gray-400"
@@ -187,16 +255,17 @@
 
   <div class="flex-1 overflow-auto flex flex-col gap-2 p-2 pl-0">
     {#each colors as c}
-      <Palette
-        color={c}
-        {scales}
-        {chromaStep}
-        {chromaMinimum}
-        {overrides}
-        on:delete={(event) => {
-          colors = colors.filter((c) => c !== event.detail);
-        }}
-      />
+      {@const result = generatePalette(c, { scales, chromaStep, chromaMinimum, overrides, curve })}
+      {#if result.palette && typeof result.index === 'number'}
+        <Palette
+          color={c}
+          palette={result.palette}
+          colorIndex={result.index}
+          on:delete={(event) => {
+            colors = colors.filter((c) => c !== event.detail);
+          }}
+        />
+      {/if}
     {:else}
       <div class="flex h-full w-full items-center justify-center">
         <div class="text-center flex flex-col items-center">

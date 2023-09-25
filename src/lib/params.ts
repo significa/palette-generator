@@ -8,6 +8,7 @@ export const PARAMS = {
   chromaStep: 'cs',
   chromaMinimum: 'cm',
   overrides: 'o',
+  curve: 'cv',
 }
 
 const isValidNumber = (v: number | undefined) => typeof v === 'number' && !isNaN(v);
@@ -18,12 +19,14 @@ export function getParamsFromConfig({
   chromaStep,
   chromaMinimum,
   overrides,
+  curve,
 }: {
   colors: string[];
   scales: number;
   chromaStep: number;
   chromaMinimum: number;
   overrides: Override[];
+  curve: number[];
 }): URLSearchParams {
   const params = new URLSearchParams();
   
@@ -42,6 +45,8 @@ export function getParamsFromConfig({
 
     return `${scale}${chroma}${lightness}`;
   }).join(','));
+  // if there is a curve and it's different than the default
+  if (curve.length && curve.some((n, i) => Number(n) !== DEFAULT.curve[i])) params.set(PARAMS.curve, curve.join(','));
 
   return params;
 }
@@ -67,6 +72,7 @@ export function getConfigFromParams(params: URLSearchParams) {
       lightness: isValidNumber(lightness) ? lightness : undefined,
     }
   }) ?? [];
+  const curve = params.get(PARAMS.curve)?.split(',').map((v) => Number(v)).filter((n) => !isNaN(n)) ?? DEFAULT.curve;
 
-  return { colors, scales, chromaStep, chromaMinimum, overrides };
+  return { colors, scales, chromaStep, chromaMinimum, overrides, curve };
 }
