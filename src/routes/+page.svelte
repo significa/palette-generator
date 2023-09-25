@@ -23,6 +23,7 @@
   import Plus from '$components/icons/plus.svelte';
   import SmallButton from '$components/small-button.svelte';
   import RepeatableRow from './repeatable-row.svelte';
+  import Pencil from '$components/icons/pencil.svelte';
 
   const config = getConfigFromParams($page.url.searchParams);
 
@@ -164,7 +165,7 @@
     <div class="border-t p-4">
       <div class="flex items-center justify-between">
         <h3 class="text-sm flex items-center gap-1 text-gray-500">
-          <Crosshair width="15px" height="15px" />
+          <Pencil width="15px" height="15px" />
           Curve
         </h3>
         <SmallButton
