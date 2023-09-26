@@ -73,24 +73,30 @@
           copyToClipboard(chroma(color).hex(), { id: `${color}-hex-${i}` });
         }}
         class={cn(
-          'group min-w-[100px] flex-1 h-32 bg-[--square-color] text-[10px] leading-tight flex flex-col justify-between gap-0.5 items-start p-3 text-left transition-all outline-none',
+          'group flex-1 h-40 bg-[--square-color] transition-all outline-none',
           i === 0 && 'rounded-l-md',
           i === palette.length - 1 && 'rounded-r-md',
-          colorIndex === i && 'scale-110 rounded-md shadow-lg border',
+          colorIndex === i && 'scale-105 rounded-md shadow-lg border',
           l >= 0.6
-            ? 'border-black/10 text-black/60 hover:text-black focus-visible:text-black'
-            : 'border-white/10 text-white/60 hover:text-white focus-visible:text-white'
+            ? 'border-black/10 text-black/50 hover:text-black focus-visible:text-black'
+            : 'border-white/10 text-white/50 hover:text-white focus-visible:text-white'
         )}
         style="--square-color: {getOklch(l, c, h)}"
       >
-        <div class="flex items-center justify-between w-full">
-          <span class="tabular-nums">{i + 1}</span>
-          <Copy class="opacity-0 group-hover:opacity-100 transition-all" />
-        </div>
-        <div class="flex flex-col gap-0.5 font-mono">
-          <span>L{getL(l)}</span>
-          <span>C{getC(c)}</span>
-          <span>H{getH(h)}</span>
+        <div
+          class="h-full flex flex-col justify-between gap-0.5 items-start p-3 text-left text-[10px] leading-tight"
+        >
+          <div class="flex items-center justify-between w-full">
+            <span class="tabular-nums">{i + 1}</span>
+            <Copy class="opacity-0 group-hover:opacity-100 transition-all" />
+          </div>
+          <div
+            class="flex flex-col gap-0.5 font-mono pr-2 opacity-0 group-hover:opacity-100 transition-all"
+          >
+            <span>L{getL(l)}</span>
+            <span>C{getC(c)}</span>
+            <span>H{getH(h)}</span>
+          </div>
         </div>
       </button>
     {/each}
