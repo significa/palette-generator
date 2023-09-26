@@ -2,14 +2,16 @@
   import chroma from 'chroma-js';
   import { createEventDispatcher } from 'svelte';
 
-  import { cn } from '$lib/utils';
-  import { getC, getH, getL, getOklch, type OKLCH } from '$lib/color';
+  import { cn, downloadFile, paletteToJSON } from '$lib/utils';
+  import { getC, getH, getL, getOklch } from '$lib/color';
   import { copyToClipboard } from '$lib/clipboard';
   import { paletteToSvg } from '$lib/svg';
 
   import SmallButton from '$components/small-button.svelte';
   import Copy from '$components/icons/copy.svelte';
   import Trash from '$components/icons/trash.svelte';
+  import Download from '$components/icons/download.svelte';
+  import type { OKLCH } from '$lib/types';
 
   const dispatch = createEventDispatcher<{ delete: string }>();
 
@@ -49,6 +51,19 @@
       <SmallButton
         on:click={() => {
           if (palette) {
+            downloadFile(
+              JSON.stringify(paletteToJSON(`${color} Palette`, palette), null, 2),
+              `${color}.json`
+            );
+          }
+        }}
+      >
+        <Download class="opacity-50" width="16px" height="16px" />
+        Download JSON
+      </SmallButton>
+      <SmallButton
+        on:click={() => {
+          if (palette) {
             copyToClipboard(paletteToSvg(palette), { id: `${color}-svg` });
           }
         }}
@@ -70,7 +85,7 @@
     {#each palette as [l, c, h], i}
       <button
         on:click={() => {
-          copyToClipboard(chroma(color).hex(), { id: `${color}-hex-${i}` });
+          copyToClipboard(chroma.oklch(l, c, h).hex(), { id: `${color}-hex-${i}` });
         }}
         class={cn(
           'group flex-1 h-40 bg-[--square-color] transition-all outline-none',

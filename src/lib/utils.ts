@@ -1,6 +1,8 @@
 import type { ClassValue } from 'clsx';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import type { OKLCH } from './types';
+import chroma from 'chroma-js';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -31,4 +33,65 @@ export function findClosestNumber(arr: number[], target: number) {
   return arr.reduce((prev, curr) => {
     return Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev;
   });
+}
+
+/**
+ * 
+ * {
+  "{color} Palette": {
+    "1": {
+      "name": "1",
+      "description": "",
+      "value": "HEX_COLOR",
+      "type": "color"
+    },
+    "2": {
+      "name": "2",
+      "description": "",
+      "value": "HEX_COLOR",
+      "type": "color"
+    },
+    "name": "{color} Palette"
+  }
+}
+ */
+
+type PaletteJSON = Record<string, Record<string, {
+  name: string;
+  description: string;
+  value: string;
+  type: string;
+}>>
+
+const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
+
+export function paletteToJSON(name: string, palette: OKLCH[]): { [key: string]: PaletteJSON } {
+  return {
+    [capitalize(name)]: palette.reduce((obj, [l, c, h], i) => {
+      const name = i + 1;
+      const value = chroma.oklch(l, c, h).hex();
+      const description = '';
+      const type = 'color';
+      
+      return {
+        ...obj,
+        [name]: {
+          name,
+          description,
+          value,
+          type,
+        },
+      };
+    }, {})
+  }
+}
+
+export function downloadFile(data: string, fileName = 'palette.json') {
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  a.click();
+  URL.revokeObjectURL(url);
 }
