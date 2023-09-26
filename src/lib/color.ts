@@ -24,7 +24,6 @@ export const generatePalette = (color: string, config: Partial<Configuration> = 
     // reduce chroma as we get further from the base color
     // don't go below the minimum (the lowest between minChroma or the base color's chroma)
     const cStep = chromaStepType === 'value' ? chromaStep : chromaStep * c;
-    console.log({ cStep })
     let newC = Math.max(Math.min(c, chromaMinimum), c - cStep * Math.abs(i - index));
 
     // overrides
