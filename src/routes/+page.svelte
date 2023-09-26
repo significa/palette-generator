@@ -7,8 +7,7 @@
   import { browser } from '$app/environment';
 
   import { DEFAULT } from '$lib/constants';
-  import { generatePalette, type Override } from '$lib/color';
-  import { getColorsFromParams, getConfigFromParams, getParamsFromConfig } from '$lib/params';
+  import { generatePalette } from '$lib/color';
   import { cn } from '$lib/utils';
 
   import Input from '$components/input.svelte';
@@ -27,8 +26,10 @@
   import EditCurvePanel from '$components/edit-curve-panel.svelte';
   import MinimalButton from '$components/minimal-button.svelte';
   import Reset from '$components/icons/reset.svelte';
+  import Select from '$components/select.svelte';
+  import { parseColor, parser, serializer } from '$lib/params';
 
-  const config = getConfigFromParams($page.url.searchParams);
+  const config = parser($page.url.searchParams);
 
   let color = '';
   let invalid = false;
@@ -36,13 +37,14 @@
   let colors = config.colors;
 
   let scales = config.scales;
+  let chromaStepType = config.chromaStepType;
   let chromaStep = config.chromaStep;
   let chromaMinimum = config.chromaMinimum;
-  let overrides: Override[] = config.overrides;
+  let overrides = config.overrides;
   let curve = config.curve;
 
   $: if (browser) {
-    const params = getParamsFromConfig({
+    const params = serializer({
       colors,
       scales,
       chromaStep,
@@ -78,7 +80,7 @@
 
         // assign variables
         invalid = false;
-        colors = [color, ...getColorsFromParams($page.url.searchParams)];
+        colors = [color, ...parseColor($page.url.searchParams)];
         color = '';
       }}
     >
@@ -131,13 +133,17 @@
               chromaStep = DEFAULT.chromaStep;
             }}
           >
+            <Select class="flex-1" bind:value={chromaStepType}>
+              <option value="value">Value</option>
+              <option value="percentage">Percentage</option>
+            </Select>
             <Input
-              id="chroma-step"
+              class="flex-1"
               type="number"
               bind:value={chromaStep}
               step={0.001}
               min={0}
-              max={0.1}
+              max={1}
             />
           </ConfigurationField>
 
@@ -254,7 +260,14 @@
 
   <div class="flex-1 overflow-auto flex flex-col gap-2 p-2 pl-0">
     {#each colors as c}
-      {@const result = generatePalette(c, { scales, chromaStep, chromaMinimum, overrides, curve })}
+      {@const result = generatePalette(c, {
+        scales,
+        chromaStepType,
+        chromaStep,
+        chromaMinimum,
+        overrides,
+        curve
+      })}
       {#if result.palette && typeof result.index === 'number'}
         <Palette
           color={c}

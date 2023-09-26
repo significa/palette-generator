@@ -22,7 +22,9 @@
       <Reset />
     </MinimalButton>
   </div>
-  <slot />
+  <div class="flex items-center gap-2">
+    <slot />
+  </div>
   {#if description}
     <span class="block mt-2 text-xs text-gray-400">{description}</span>
   {/if}

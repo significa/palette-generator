@@ -1,23 +1,12 @@
 import chroma from "chroma-js";
-import { DEFAULT } from "./constants";
 import { findClosestNumber, resizeNumberArray } from "./utils";
+import type { Configuration, OKLCH } from "./types";
+import { parser, serializer } from "./params";
 
-export type OKLCH = [number, number, number];
-export type Override = { scale?: number; chroma?: number; lightness?: number; };
-
-export const generatePalette = (color: string, config: {
-  scales?: number;
-  chromaStep?: number;
-  chromaMinimum?: number;
-  overrides?: Override[];
-  curve?: number[];
-} = {}): { palette?: OKLCH[]; index?: number } => {
+export const generatePalette = (color: string, config: Partial<Configuration> = {}): { palette?: OKLCH[]; index?: number } => {
   if (!chroma.valid(color)) return {};
 
-  const scales = Number(config.scales) ?? DEFAULT.scales;
-  const chromaStep = Number(config.chromaStep) ?? DEFAULT.chromaStep;
-  const chromaMinimum = Number(config.chromaMinimum) ?? DEFAULT.chromaMinimum;
-  const curve = config.curve?.map(Number) ?? DEFAULT.curve;
+  const { scales, chromaStepType, chromaStep, chromaMinimum, curve, overrides } = parser(serializer(config))
 
   const [l, c, h] = chroma(color).oklch();
 
@@ -34,10 +23,12 @@ export const generatePalette = (color: string, config: {
 
     // reduce chroma as we get further from the base color
     // don't go below the minimum (the lowest between minChroma or the base color's chroma)
-    let newC = Math.max(Math.min(c, chromaMinimum), c - chromaStep * Math.abs(i - index));
+    const cStep = chromaStepType === 'value' ? chromaStep : chromaStep * c;
+    console.log({ cStep })
+    let newC = Math.max(Math.min(c, chromaMinimum), c - cStep * Math.abs(i - index));
 
     // overrides
-    const override = config.overrides?.find((o) => Number(o.scale) === i + 1);
+    const override = overrides?.find((o) => Number(o.scale) === i + 1);
     
     // don't override if the step is the base color
     if (override && i !== index) {
