@@ -3,8 +3,8 @@ import { findClosestNumber, resizeNumberArray } from "./utils";
 import type { Configuration, OKLCH } from "./types";
 import { parser, serializer } from "./params";
 
-export const generatePalette = (color: string, config: Partial<Configuration> = {}): { palette?: OKLCH[]; index?: number } => {
-  if (!chroma.valid(color)) return {};
+export const generatePalette = (color: string, config: Partial<Configuration> = {}): { base: { oklch: OKLCH; index: number }; palette: OKLCH[] } => {
+  if (!chroma.valid(color)) throw new Error('Invalid color');
 
   const { scales, chromaStepType, chromaStep, chromaMinimum, curve, overrides } = parser(serializer(config))
 
@@ -43,7 +43,7 @@ export const generatePalette = (color: string, config: Partial<Configuration> = 
     return [newL, newC, h];
   });
 
-  return { palette, index }
+  return { base: { oklch: [l, c, h], index: index }, palette }
 }
 
 export const getL = (l: number) => +(l * 100).toFixed(2) + '%';

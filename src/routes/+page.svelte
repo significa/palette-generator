@@ -260,7 +260,7 @@
 
   <div class="flex-1 overflow-auto flex flex-col gap-2 p-2 pl-0">
     {#each colors as c}
-      {@const result = generatePalette(c, {
+      {@const { base, palette } = generatePalette(c, {
         scales,
         chromaStepType,
         chromaStep,
@@ -268,16 +268,14 @@
         overrides,
         curve
       })}
-      {#if result.palette && typeof result.index === 'number'}
-        <Palette
-          color={c}
-          palette={result.palette}
-          colorIndex={result.index}
-          on:delete={(event) => {
-            colors = colors.filter((c) => c !== event.detail);
-          }}
-        />
-      {/if}
+      <Palette
+        color={c}
+        {palette}
+        colorIndex={base.index}
+        on:delete={(event) => {
+          colors = colors.filter((c) => c !== event.detail);
+        }}
+      />
     {:else}
       <div class="flex h-full w-full items-center justify-center">
         <div class="text-center flex flex-col items-center">
