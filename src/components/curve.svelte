@@ -16,7 +16,10 @@
   } = createPopover({
     forceVisible: true,
     positioning: {
-      placement: 'right-start'
+      placement: 'right-start',
+      overlap: true,
+      fitViewport: true,
+      strategy: 'fixed'
     }
   });
 
@@ -26,7 +29,7 @@
 <button
   {...$trigger}
   use:trigger
-  class="relative group rounded-md border shadow-sm outline-none focus-visible:ring-4 ring-black/5 transition-all"
+  class="relative group rounded-md border shadow-sm outline-none focus-visible:ring-4 ring-black/5 transition-all w-full"
 >
   <div
     class="flex items-center justify-between gap-1 text-[10px] tabular-nums opacity-50 p-1 mb-2 border-b"
@@ -39,16 +42,21 @@
     <svg viewBox="0 0 {height} {width}" class="w-full overflow-visible">
       <!-- Add circles at each point along the curve -->
       {#each curve as point, index}
-        <circle
-          cx={index * (height / (curve.length - 1))}
-          cy={width - point * width}
-          r="1"
-          fill="black"
+        <line
+          x1={index * (height / (curve.length - 1))}
+          y1={width - point * width}
+          x2={index * (height / (curve.length - 1))}
+          y2={width - point * width}
+          stroke-width="6"
+          stroke="black"
+          vector-effect="non-scaling-stroke"
+          style="stroke-linecap: round;"
         />
       {/each}
 
       <!-- Connect the circles with lines to form the curve -->
       <path
+        vector-effect="non-scaling-stroke"
         d={`
           M 0 ${width - curve[0] * width}
           ${curve
@@ -60,13 +68,13 @@
         `}
         fill="none"
         stroke="black"
-        stroke-width="1"
+        stroke-width="2"
       />
     </svg>
   </div>
   <div
     class={cn(
-      'absolute z-50 inset-0 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity flex items-center justify-center bg-black/5',
+      'absolute z-40 inset-0 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity flex items-center justify-center bg-black/5',
       $open && 'opacity-100'
     )}
   >
