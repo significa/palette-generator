@@ -12,7 +12,6 @@
 
   import Input from '$components/input.svelte';
   import Button from '$components/button.svelte';
-  import Bear from '$components/bear.svelte';
   import SlidersHorizontal from '$components/icons/sliders-horizontal.svelte';
   import Crosshair from '$components/icons/crosshair.svelte';
   import PaletteIcon from '$components/icons/palette.svelte';
@@ -30,6 +29,8 @@
   import { parseColor, parser, serializer } from '$lib/params';
   import Eye from '$components/icons/eye.svelte';
   import EyeClosed from '$components/icons/eye-closed.svelte';
+
+  import bear from '../assets/segg-bear.png';
 
   const config = parser($page.url.searchParams);
 
@@ -92,6 +93,7 @@
         invalid = false;
         colors = [color, ...parseColor($page.url.searchParams)];
         color = '';
+        mobileColorsPanel = true;
       }}
     >
       <div>
@@ -283,7 +285,8 @@
       }}
       class={cn(
         'block w-full h-10 px-4 py-2 lg:hidden rounded-t-lg border bg-white transition-all',
-        mobileColorsPanel ? 'mt-4' : 'mt-0'
+        mobileColorsPanel ? 'mt-4' : 'mt-0',
+        'shadow-[0_-1px_2px_rgba(0,0,0,0.04),0_-2px_4px_rgba(0,0,0,0.02)]'
       )}
     >
       <h1 class="flex items-center justify-between gap-1 text-sm">
@@ -323,7 +326,7 @@
         <div class="flex h-full w-full items-center justify-center">
           <div class="text-center flex flex-col items-center">
             <div class="text-gray-200 w-48 -ml-4">
-              <Bear />
+              <img alt="Illustration of a polar bear" src={bear} />
             </div>
             <p>It's so white</p>
             <p class="text-gray-500">Here's a polar bear</p>
