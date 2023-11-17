@@ -58,9 +58,14 @@
 </script>
 
 <main class="mx-auto flex gap-2 h-screen">
-  <div class="w-80 bg-white rounded-xl border flex flex-col gap-2 overflow-auto shadow-sm m-2 mr-0">
+  <div
+    class={cn(
+      'bg-white flex flex-col gap-2 overflow-auto shadow-sm',
+      'lg:w-80 lg:rounded-xl lg:border lg:m-2 lg:mr-0'
+    )}
+  >
     <header class="border-b px-4 py-2">
-      <h1 class="flex items-center gap-1">
+      <h1 class="flex items-center gap-1 text-sm">
         <PaletteIcon width="20px" height="20px" />
         Palette generator
       </h1>
@@ -258,34 +263,48 @@
     </div>
   </div>
 
-  <div class="flex-1 overflow-auto flex flex-col gap-2 p-2 pl-0">
-    {#each colors as c}
-      {@const { base, palette } = generatePalette(c, {
-        scales,
-        chromaStepType,
-        chromaStep,
-        chromaMinimum,
-        overrides,
-        curve
-      })}
-      <Palette
-        color={c}
-        {palette}
-        colorIndex={base.index}
-        on:delete={(event) => {
-          colors = colors.filter((c) => c !== event.detail);
-        }}
-      />
-    {:else}
-      <div class="flex h-full w-full items-center justify-center">
-        <div class="text-center flex flex-col items-center">
-          <div class="text-gray-200 w-48 -ml-4">
-            <Bear />
+  <div
+    class={cn(
+      'flex-1 overflow-auto',
+      'fixed z-40 top-[100dvh-theme(space.6)] w-full h-full bg-white',
+      'lg:static lg:bg-transparent'
+    )}
+  >
+    <header class="border-b px-4 py-2 lg:hidden">
+      <h1 class="flex items-center gap-1 text-sm">
+        <PaletteIcon width="20px" height="20px" />
+        Colors
+      </h1>
+    </header>
+    <div class="lg:p-2 lg:pl-0 flex flex-col lg:gap-2">
+      {#each colors as c}
+        {@const { base, palette } = generatePalette(c, {
+          scales,
+          chromaStepType,
+          chromaStep,
+          chromaMinimum,
+          overrides,
+          curve
+        })}
+        <Palette
+          color={c}
+          {palette}
+          colorIndex={base.index}
+          on:delete={(event) => {
+            colors = colors.filter((c) => c !== event.detail);
+          }}
+        />
+      {:else}
+        <div class="flex h-full w-full items-center justify-center">
+          <div class="text-center flex flex-col items-center">
+            <div class="text-gray-200 w-48 -ml-4">
+              <Bear />
+            </div>
+            <p>It's so white</p>
+            <p class="text-gray-500">Here's a polar bear</p>
           </div>
-          <p>It's so white</p>
-          <p class="text-gray-500">Here's a polar bear</p>
         </div>
-      </div>
-    {/each}
+      {/each}
+    </div>
   </div>
 </main>

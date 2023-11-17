@@ -22,14 +22,15 @@
   $: oklch = chroma(color).oklch();
 </script>
 
-<div class="bg-white border rounded-xl shadow-sm">
-  <div class="flex items-center justify-between p-3 pb-0">
+<div class="bg-white lg:border lg:rounded-xl lg:shadow-sm border-b">
+  <div class="flex items-center justify-between p-2 lg:p-3 pb-0 lg:pb-0">
     <div class="flex items-center gap-2">
       <div
         class="border border-black/10 rounded-md w-6 h-6"
         style="background-color: {getOklch(...oklch)};"
       />
       <SmallButton
+        class="hidden sm:inline-flex"
         on:click={() => {
           copyToClipboard(color, { id: color });
         }}
@@ -39,6 +40,7 @@
       </SmallButton>
 
       <SmallButton
+        class="hidden lg:inline-flex"
         on:click={() => {
           copyToClipboard(getOklch(...oklch), { id: `${color}-oklch` });
         }}
@@ -49,6 +51,7 @@
     </div>
     <div class="flex items-center gap-2">
       <SmallButton
+        class="hidden lg:inline-flex"
         on:click={() => {
           if (palette) {
             downloadFile(
@@ -62,6 +65,7 @@
         Download JSON
       </SmallButton>
       <SmallButton
+        class="hidden lg:inline-flex"
         on:click={() => {
           if (palette) {
             copyToClipboard(paletteToSvg(palette), { id: `${color}-svg` });
@@ -81,20 +85,21 @@
       </SmallButton>
     </div>
   </div>
-  <div class="flex mt-2 overflow-auto p-3 pt-2">
+  <div class={cn('flex mt-2 overflow-auto p-2 pt-1', 'lg:p-3 lg:pt-2')}>
     {#each palette as [l, c, h], i}
       <button
         on:click={() => {
           copyToClipboard(chroma.oklch(l, c, h).hex(), { id: `${color}-hex-${i}` });
         }}
         class={cn(
-          'group flex-1 h-40 bg-[--square-color] transition-all outline-none',
+          'group flex-1 bg-[--square-color] transition-all outline-none border border-r-0 last:border-r lg:border-0',
           i === 0 && 'rounded-l-md',
           i === palette.length - 1 && 'rounded-r-md',
-          colorIndex === i && 'scale-105 rounded-md shadow-lg border',
+          colorIndex === i && 'scale-105 rounded-md shadow-lg border lg:border',
           l >= 0.6
             ? 'border-black/10 text-black/50 hover:text-black focus-visible:text-black'
-            : 'border-white/10 text-white/50 hover:text-white focus-visible:text-white'
+            : 'border-white/10 text-white/50 hover:text-white focus-visible:text-white',
+          'h-24 lg:h-32'
         )}
         style="--square-color: {getOklch(l, c, h)}"
       >
