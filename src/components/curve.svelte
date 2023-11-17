@@ -45,8 +45,8 @@
         <line
           x1={index * (height / (curve.length - 1))}
           y1={width - point * width}
-          x2={index * (height / (curve.length - 1))}
-          y2={width - point * width}
+          x2={index * (height / (curve.length - 1)) + 0.001}
+          y2={width - point * width + 0.001}
           stroke-width="6"
           stroke="black"
           vector-effect="non-scaling-stroke"
