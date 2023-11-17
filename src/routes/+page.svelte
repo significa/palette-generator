@@ -28,6 +28,8 @@
   import Reset from '$components/icons/reset.svelte';
   import Select from '$components/select.svelte';
   import { parseColor, parser, serializer } from '$lib/params';
+  import Eye from '$components/icons/eye.svelte';
+  import EyeClosed from '$components/icons/eye-closed.svelte';
 
   const config = parser($page.url.searchParams);
 
@@ -284,9 +286,13 @@
         mobileColorsPanel ? 'mt-4' : 'mt-0'
       )}
     >
-      <h1 class="flex items-center gap-1 text-sm">
-        <PaletteIcon width="20px" height="20px" />
-        Colors
+      <h1 class="flex items-center justify-between gap-1 text-sm">
+        Palettes
+        {#if mobileColorsPanel}
+          <EyeClosed />
+        {:else}
+          <Eye />
+        {/if}
       </h1>
     </button>
     <div
