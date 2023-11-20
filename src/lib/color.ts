@@ -1,12 +1,11 @@
 import chroma from "chroma-js";
 import { findClosestNumber, resizeNumberArray } from "./utils";
 import type { Configuration, OKLCH } from "./types";
-import { parser, serializer } from "./params";
 
-export const generatePalette = (color: string, config: Partial<Configuration> = {}): { base: { oklch: OKLCH; index: number }; palette: OKLCH[] } => {
+export const generatePalette = (color: string, config: Configuration): { base: { oklch: OKLCH; index: number }; palette: OKLCH[] } => {
   if (!chroma.valid(color)) throw new Error('Invalid color');
 
-  const { scales, chromaStepType, chromaStep, chromaMinimum, curve, overrides } = parser(serializer(config))
+  const { scales, chromaStepType, chromaStep, chromaMinimum, curve, overrides } = config
 
   const [l, c, h] = chroma(color).oklch();
 

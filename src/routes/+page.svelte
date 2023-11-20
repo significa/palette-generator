@@ -306,14 +306,19 @@
       )}
     >
       {#each colors as c}
-        {@const { base, palette } = generatePalette(c, {
-          scales,
-          chromaStepType,
-          chromaStep,
-          chromaMinimum,
-          overrides,
-          curve
-        })}
+        {@const { base, palette } = generatePalette(
+          c,
+          parser(
+            serializer({
+              scales,
+              chromaStepType,
+              chromaStep,
+              chromaMinimum,
+              overrides,
+              curve
+            })
+          )
+        )}
         <Palette
           color={c}
           {palette}

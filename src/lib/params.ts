@@ -107,8 +107,8 @@ export function parser(params: URLSearchParams): Configuration {
   const colors = parseColor(params);
   const scales = Number(params.get(PARAMS.scales)) || DEFAULT.scales;
   const chromaStepType = parseChromaStepType(params);
-  const chromaStep = Number(params.get(PARAMS.chromaStep)) || DEFAULT.chromaStep;
-  const chromaMinimum = Number(params.get(PARAMS.chromaMinimum)) || DEFAULT.chromaMinimum;
+  const chromaStep = Number(params.get(PARAMS.chromaStep)) ?? DEFAULT.chromaStep;
+  const chromaMinimum = Number(params.get(PARAMS.chromaMinimum)) ?? DEFAULT.chromaMinimum;
   const overrides = parseOverrides(params);
   const curve = parseCurve(params);
 
