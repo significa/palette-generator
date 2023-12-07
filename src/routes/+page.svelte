@@ -67,7 +67,7 @@
     class={cn(
       'bg-white flex flex-col gap-2 overflow-auto shadow-sm',
       'lg:w-80 lg:rounded-xl lg:border lg:m-2 lg:mr-0',
-      'pb-10 lg:pb-0' // account for the colors panel at the bottom in mobile
+      'pb-60 lg:pb-0' // account for the colors panel at the bottom in mobile
     )}
   >
     <header class="border-b px-4 py-2">
@@ -274,15 +274,16 @@
     class={cn(
       'flex-1 lg:overflow-auto',
       'fixed z-40 top-[100dvh-theme(space.6)] w-full h-full bg-white',
+      'bottom-0',
       'lg:static lg:bg-transparent lg:top-auto lg:w-auto',
       'transition-all',
-      mobileColorsPanel ? 'top-0 bg-black/10' : 'top-[calc(100dvh-theme(space.10))] bg-black/0'
+      mobileColorsPanel ? 'h-[100dvh] bg-black/10' : 'h-[calc(theme(space.60))] bg-black/0'
     )}
   >
     <button
-      on:click={() => {
-        mobileColorsPanel = !mobileColorsPanel;
-      }}
+    on:click={() => {
+      mobileColorsPanel = !mobileColorsPanel;
+    }}
       class={cn(
         'block w-full h-10 px-4 py-2 lg:hidden rounded-t-lg border bg-white transition-all',
         mobileColorsPanel ? 'mt-4' : 'mt-0',
@@ -299,11 +300,11 @@
       </h1>
     </button>
     <div
-      class={cn(
-        'lg:p-2 lg:pl-0 flex flex-col lg:gap-2',
-        'overflow-auto h-[calc(100dvh-theme(space.10)-theme(space.4))] bg-white',
-        'lg:overflow-visible lg:h-full lg:bg-transparent'
-      )}
+    class={cn(
+      'lg:p-2 lg:pl-0 pb-10 flex flex-col lg:gap-2',
+      'overflow-auto h-full lg:h-[calc(100dvh-theme(space.10)-theme(space.4))] bg-white',
+      'lg:overflow-visible overflow-scroll lg:h-full lg:bg-transparent'
+    )}
     >
       {#each colors as c}
         {@const { base, palette } = generatePalette(
