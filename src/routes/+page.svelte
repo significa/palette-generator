@@ -338,6 +338,21 @@
           </div>
         </div>
       {/each}
+      <div class="flex-1 flex justify-end items-end text-xs gap-1 p-1">
+        <a
+          class="hover:opacity-80 transition-opacity"
+          href="https://significa.co/"
+          target="_blank"
+          rel="noopener noreferrer">Built by Significa</a
+        >
+        <span class="opacity-20"> / </span>
+        <a
+          class="hover:opacity-80 transition-opacity"
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://github.com/significa/palette-generator">Source on Github</a
+        >
+      </div>
     </div>
   </div>
 </main>
