@@ -300,11 +300,11 @@
       </h1>
     </button>
     <div
-    class={cn(
-      'lg:p-2 lg:pl-0 pb-10 flex flex-col lg:gap-2',
-      'overflow-auto h-full lg:h-[calc(100dvh-theme(space.10)-theme(space.4))] bg-white',
-      'lg:overflow-visible overflow-scroll lg:h-full lg:bg-transparent'
-    )}
+      class={cn(
+        'lg:p-2 lg:pl-0 pb-10 flex flex-col lg:gap-2',
+        'overflow-auto h-full lg:h-[calc(100dvh-theme(space.10)-theme(space.4))] bg-white',
+        'lg:overflow-visible overflow-scroll lg:h-full lg:bg-transparent'
+      )}
     >
       {#each colors as c}
         {@const { base, palette } = generatePalette(
