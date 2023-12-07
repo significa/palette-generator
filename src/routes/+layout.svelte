@@ -10,7 +10,8 @@
   <title>Palette Generator | Significa</title>
 </svelte:head>
 
-<Toaster {toaster} let:toast>
+<!-- Toast fixed while occupying screen is preventing X-axis scroll events from being triggered. -->
+<Toaster {toaster} let:toast class='overflow-visible pointer-events-none inset-auto bottom-[10px] h-1 inset-x-1'>
   <Toast {toast} />
 </Toaster>
 
