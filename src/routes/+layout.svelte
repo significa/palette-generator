@@ -14,26 +14,26 @@
 
   <meta
     name="description"
-    content="Create stunning, balanced colour palettes for free with Significa’s Palette Generator — an intuitive tool for designers seeking the perfect hues for any project."
+    content="Create stunning, balanced colour palettes for free with Significa's Palette Generator. An intuitive tool for designers seeking the perfect hues for any project."
   />
 
   <meta property="og:title" content="Palette generator by Significa" />
 
   <meta
     property="og:description"
-    content="Create stunning, balanced colour palettes for free with Significa’s Palette Generator — an intuitive tool for designers seeking the perfect hues for any project."
+    content="Create stunning, balanced colour palettes for free with Significa's Palette Generator. An intuitive tool for designers seeking the perfect hues for any project."
   />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="Palette generator by Significa" />
 
   <meta
     property="twitter:title"
-    content="Create stunning, balanced colour palettes for free with Significa’s Palette Generator — an intuitive tool for designers seeking the perfect hues for any project."
+    content="Create stunning, balanced colour palettes for free with Significa's Palette Generator. An intuitive tool for designers seeking the perfect hues for any project."
   />
 
   <meta
     property="twitter:description"
-    content="Create stunning, balanced colour palettes for free with Significa’s Palette Generator — an intuitive tool for designers seeking the perfect hues for any project."
+    content="Create stunning, balanced colour palettes for free with Significa's Palette Generator. An intuitive tool for designers seeking the perfect hues for any project."
   />
 
   <meta property="og:url" content={$page.url.toString()} />

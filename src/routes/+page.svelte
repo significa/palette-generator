@@ -289,14 +289,14 @@
         'shadow-[0_-1px_2px_rgba(0,0,0,0.04),0_-2px_4px_rgba(0,0,0,0.02)]'
       )}
     >
-      <h1 class="flex items-center justify-between gap-1 text-sm">
+      <h2 class="flex items-center justify-between gap-1 text-sm">
         Palettes
         {#if mobileColorsPanel}
           <EyeClosed />
         {:else}
           <Eye />
         {/if}
-      </h1>
+      </h2>
     </button>
     <div
       class={cn(
